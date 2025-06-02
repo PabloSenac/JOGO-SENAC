@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo Transformação - Multiplayer</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Lobby Area -->
+        <div id="lobby-area">
+            <h2>Lobby - Jogo Transformação</h2>
+            <div id="user-info">
+                <div id="profile-pic-section">
+                    <label for="profile-pic-upload">Foto de Perfil:</label>
+                    <img id="profile-pic-preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23eee'/%3E%3Ctext x='50' y='55' font-family='Arial' font-size='40' fill='%23aaa' text-anchor='middle'%3E?%3C/text%3E%3C/svg%3E" alt="Prévia da Foto">
+                    <input type="file" id="profile-pic-upload" accept="image/png, image/jpeg, image/webp">
+                </div>
+                <div id="name-section">
+                    <label for="player-name">Seu Nome:</label>
+                    <input type="text" id="player-name" placeholder="Digite seu nome aqui" maxlength="20">
+                </div>
+                <p id="lobby-error" class="error-message hidden"></p>
+            </div>
+
+            <div id="room-actions">
+                <div id="create-room-section">
+                    <h4>Criar Nova Sala</h4>
+                    <input type="text" id="new-room-name" placeholder="Nome da Sala (opcional)" maxlength="30">
+                    <div class="mode-selection">
+                        <label>Modo de Jogo:</label>
+                        <select id="game-mode-select">
+                            <option value="team" selected>Times</option>
+                            <option value="1v1">1 contra 1</option>
+                        </select>
+                    </div>
+                    <button id="create-room-button">Criar Sala</button>
+                </div>
+                <div id="room-list-section">
+                    <h4>Salas Disponíveis</h4>
+                    <div id="room-list-container">
+                        <ul id="room-list">
+                            <li>Aguardando lista de salas...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Waiting Room Area -->
+        <div id="waiting-room-area" class="hidden">
+            <h2 id="waiting-room-title">Sala: Nome da Sala</h2>
+            <p id="waiting-room-mode" style="text-align: center; margin-top: -15px; margin-bottom: 15px; font-style: italic; color: var(--light-text);"></p>
+            <div id="waiting-room-content">
+                <div id="waiting-player-list">
+                    <h4>Jogadores na Sala (<span id="waiting-player-count">0</span>)</h4>
+                    <ul id="waiting-players">
+                        <!-- Player list with pictures -->
+                    </ul>
+                </div>
+                <div id="waiting-room-controls">
+                     <p id="waiting-message">Aguardando o líder iniciar o jogo...</p>
+                     <button id="start-game-button" class="hidden">Iniciar Jogo</button>
+                     <button id="leave-room-button">Sair da Sala</button>
+                     <p id="waiting-error" class="error-message hidden"></p>
+                </div>
+            </div>
+            <div id="waiting-chat-area" class="game-section">
+                 <h4>Chat da Sala</h4>
+                 <div id="waiting-chat-messages" class="chat-messages-box">
+                     <!-- Chat messages -->
+                 </div>
+                 <div id="waiting-chat-input-area" class="chat-input-container">
+                     <input type="text" id="waiting-chat-input" placeholder="Digite sua mensagem...">
+                     <button id="waiting-send-chat-button">Enviar</button>
+                 </div>
+             </div>
+        </div>
+
+        <!-- Game Area -->
+        <div id="game-area" class="hidden">
+            <div id="game-info" class="game-section">
+                <h4>Informações da Partida (<span id="game-mode-display"></span>)</h4>
+                <p>Sala: <strong id="current-room-id">-</strong></p>
+                <p>Rodada: <strong id="current-round">-</strong> / <strong id="max-rounds">-</strong></p>
+            </div>
+
+            <div id="situation-area" class="game-section">
+                <h4>Situação Problema</h4>
+                 <div id="roulette-placeholder" class="hidden">
+                    <div class="spinner"></div>
+                    <p>Sorteando problema...</p>
+                </div>
+                <p id="situation-text" class="hidden">Aguardando início da rodada...</p>
+                <div id="timer-section">
+                    Tempo Restante: <span id="timer">--:--</span>
+                </div>
+            </div>
+
+            <div id="skills-area" class="game-section">
+                <h4>Escolha uma Habilidade (Solução)</h4>
+                <div id="skill-cards">
+                    <p>Aguardando início da rodada...</p>
+                </div>
+            </div>
+
+            <div id="scoreboard-area" class="game-section">
+                <h4>Placar e Progresso</h4>
+                <div id="visual-trail-container">
+                    <div id="visual-trail">
+                        <!-- Trail steps and markers -->
+                    </div>
+                </div>
+                <ul id="scoreboard-list">
+                    <!-- Scoreboard items with pictures -->
+                </ul>
+            </div>
+
+            <div id="chat-area" class="game-section">
+                <h4>Chat da Partida</h4>
+                <div id="chat-messages" class="chat-messages-box">
+                    <!-- Chat messages with pictures -->
+                </div>
+                <div id="chat-input-area" class="chat-input-container">
+                    <input type="text" id="chat-input" placeholder="Digite sua mensagem...">
+                    <button id="send-chat-button">Enviar</button>
+                </div>
+            </div>
+
+            <!-- Results Area -->
+            <div id="results-area" class="game-section hidden">
+                 <h4>Fim de Jogo!</h4>
+                 <p id="game-over-message">Calculando resultados...</p>
+                 <div id="final-scores">
+                     <!-- Final scores -->
+                 </div>
+                 <canvas id="personality-chart"></canvas>
+                 <button id="back-to-lobby-button">Voltar para o Lobby</button>
+             </div>
+        </div>
+
+    </div> <!-- /container -->
+
+    <footer>
+        Jogo Comportamental - Transformação
+    </footer>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
